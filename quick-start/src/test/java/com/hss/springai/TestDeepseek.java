@@ -5,10 +5,12 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.deepseek.DeepSeekAssistantMessage;
 import org.springframework.ai.deepseek.DeepSeekChatModel;
 import org.springframework.ai.deepseek.DeepSeekChatOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.StringUtils;
 
 import reactor.core.publisher.Flux;
 
@@ -38,6 +40,34 @@ public class TestDeepseek {
         stream.toIterable().forEach(System.out::println);
     }
 
+
+    /**
+     * 流式响应，深度思考
+     * @param deepSeekChatModel
+     */
+    @Test
+    public void testDeepseekStreamReasoning(@Autowired DeepSeekChatModel deepSeekChatModel){
+        DeepSeekChatOptions options = DeepSeekChatOptions.builder()
+                // 模型名称
+                .model("deepseek-reasoner")
+                .build();
+
+        Flux<ChatResponse> stream = deepSeekChatModel.stream(new Prompt("你好，你是谁", options));
+        stream.toIterable().forEach(e -> {
+            DeepSeekAssistantMessage assistantMessage = (DeepSeekAssistantMessage)e.getResult().getOutput();
+            if(StringUtils.hasLength(assistantMessage.getReasoningContent())){
+                System.out.println(assistantMessage.getReasoningContent());
+            }
+        });
+
+        System.out.println("-----------------");
+
+        stream.toIterable().forEach(e -> {
+            if(StringUtils.hasLength(e.getResult().getOutput().getText())){
+                System.out.println(e.getResult().getOutput().getText());
+            }
+        });
+    }
 
     /**
      * 测试deepseek模型模型的选项配置
