@@ -143,7 +143,7 @@ public class TestAliBailian {
             .build();
 
         AudioTranscriptionPrompt prompt = new AudioTranscriptionPrompt(
-            new UrlResource("https://github.com/HeTreeTerr/spring-ai-parent/raw/refs/heads/master/quick-start/output.mp3"), 
+            new UrlResource("https://github.com/HeTreeTerr/spring-ai-parent/raw/refs/heads/master/quick-start/src/main/resources/files/output.mp3"), 
             transcriptionOptions);
         
         AudioTranscriptionResponse response = transcriptionModel.call(prompt);
