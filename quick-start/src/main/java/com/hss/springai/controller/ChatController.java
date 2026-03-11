@@ -45,7 +45,7 @@ public class ChatController {
      * @param query
      * @return
      */
-    @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/stream", produces = "text/stream;charset=UTF-8")
     public Flux<String> stream(@RequestParam(value = "query", defaultValue = "你好，很高兴认识你，能简单介绍一下自己吗？")String query) {
         
         Flux<ChatResponse> streamRes = dashScopeChatModel.stream(new Prompt(query, DashScopeChatOptions
