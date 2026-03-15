@@ -3,7 +3,9 @@ package com.hss.springai;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
 
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
 
@@ -101,6 +103,29 @@ public class TestPrompt {
                 回答用户的法律咨询问题
                 {question}\s
                 """).param("question", "被裁的补偿金"))
+            .stream()
+            .content();
+        response.toIterable().forEach(System.out::println);
+    }
+
+
+    @Test
+    public void testSystemPromptTemplate3(@Autowired DashScopeChatModel dashScopeChatModel,
+                                        @Value("classpath:files/prompt.st") Resource resource
+    ){
+        ChatClient chatClient = ChatClient.builder(dashScopeChatModel)
+            // 全局有效
+            .defaultSystem(resource)
+            .build();
+
+        Flux<String> response = chatClient.prompt()
+            .user("你好")
+            // 仅当前对话有效
+            .system(p -> 
+                p.param("name", "张三")
+                .param("age", "25")
+                .param("sex", "男")
+            )
             .stream()
             .content();
         response.toIterable().forEach(System.out::println);
