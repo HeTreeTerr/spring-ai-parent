@@ -8,8 +8,11 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
 
@@ -103,5 +106,29 @@ public class TestMemory {
             .call()
             .content();
         System.out.println(r2);
+        System.out.println("===================");
+
+        String r3 = chatClient.prompt()
+            //.user("马云帅不帅？")
+            .user("我叫什么？")
+            .call()
+            .content();
+        System.out.println(r3);
+    }
+
+    /**
+     * 测试配置类
+     * 只会在该单元测类中生效，不会影响其他单元测类和主程序的运行
+     */
+    @TestConfiguration
+    static class Config {
+        
+        @Bean
+        public ChatMemory chatMemory(@Autowired ChatMemoryRepository chatMemoryRepository) {
+            return MessageWindowChatMemory.builder()
+            .maxMessages(5)
+            .chatMemoryRepository(chatMemoryRepository)
+            .build();
+        }
     }
 }
