@@ -101,7 +101,6 @@ public class TestMemory {
         System.out.println("===================");
 
         String r2 = chatClient.prompt()
-            //.user("马云帅不帅？")
             .user("我叫什么？")
             .call()
             .content();
@@ -109,8 +108,44 @@ public class TestMemory {
         System.out.println("===================");
 
         String r3 = chatClient.prompt()
-            //.user("马云帅不帅？")
             .user("我叫什么？")
+            .call()
+            .content();
+        System.out.println(r3);
+    }
+
+    /**
+     * 测试用户记忆隔离
+     * @param dashScopeChatModel
+     * @param chatMemory
+     */
+    @Test
+    public void testChatOptions(@Autowired DashScopeChatModel dashScopeChatModel,
+                                @Autowired ChatMemory chatMemory){
+        ChatClient chatClient = ChatClient.builder(dashScopeChatModel)
+                .defaultAdvisors(
+                    PromptChatMemoryAdvisor.builder(chatMemory).build()
+                )
+                .build();
+
+         String r1 = chatClient.prompt()
+            .user("我叫法外狂徒")
+            .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID, "001"))
+            .call()
+            .content();
+        System.out.println(r1);
+
+        String r2 = chatClient.prompt()
+            .user("我叫什么？")
+            .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID, "001"))
+            .call()
+            .content();
+        System.out.println(r2);
+        System.out.println("===================");
+
+        String r3 = chatClient.prompt()
+            .user("我叫什么？")
+            .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID, "002"))
             .call()
             .content();
         System.out.println(r3);
