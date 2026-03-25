@@ -2,6 +2,7 @@ package com.hss.springai;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -72,5 +73,35 @@ public class TestMemory {
         ChatResponse r2 = chatModel.call(new Prompt(chatMemory.get(conversationId)));
         System.out.println(r2.getResult().getOutput().getText());
         chatMemory.add(conversationId, r2.getResult().getOutput());
+    }
+
+    /**
+     * 测试Memory 记忆
+     * PromptChatMemoryAdvisor 实现记忆
+     * @param chatModel
+     * @param chatMemory
+     */
+    @Test
+    public void testMemoryAdvisor(@Autowired DashScopeChatModel dashScopeChatModel,
+                                @Autowired ChatMemory chatMemory) {
+        ChatClient chatClient = ChatClient.builder(dashScopeChatModel)
+                .defaultAdvisors(
+                    PromptChatMemoryAdvisor.builder(chatMemory).build()
+                )
+                .build();
+        
+        String r1 = chatClient.prompt()
+            .user("我叫法外狂徒")
+            .call()
+            .content();
+        System.out.println(r1);
+        System.out.println("===================");
+
+        String r2 = chatClient.prompt()
+            //.user("马云帅不帅？")
+            .user("我叫什么？")
+            .call()
+            .content();
+        System.out.println(r2);
     }
 }
