@@ -1,12 +1,18 @@
 package com.hss.springai;
 
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
+import com.hss.springai.TestStructuredOut.ActorsFilms;
 
 /**
  * 结构化输出
@@ -69,4 +75,39 @@ public class TestStructuredOut {
                     .entity(Address.class);
         System.out.println(address);
     }
+
+    public record ActorsFilms(
+        String actor, // 演员
+        String film1,
+        String film2,
+        String film3,
+        String film4,
+        String film5
+    ){}
+
+    /**
+     * 测试底层实体输出
+     */
+    @Test
+    public void testLowEntityOut(@Autowired DashScopeChatModel chatModel){
+        BeanOutputConverter<ActorsFilms> beanOutputConverter = new BeanOutputConverter<>(ActorsFilms.class);
+
+        String format = beanOutputConverter.getFormat();
+
+        String actor = "周星驰";
+
+        String template = """
+                提供5部{actor}导演的电影。
+                {format}
+                """;
+        PromptTemplate promptTemplate = PromptTemplate.builder()
+            .template(template)
+            .variables(Map.of("actor", actor,"format", format))
+            .build();
+        
+        ChatResponse response = chatModel.call(promptTemplate.create());
+        ActorsFilms actorsFilms = beanOutputConverter.convert(response.getResult().getOutput().getText());
+        System.out.println(actorsFilms);
+    }
 }
+                    
