@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * 多层次记忆架构
  */
 @SpringBootTest
-public class MultilayerMemory {
+public class TestMultilayerMemory {
     
     /*
     记忆多=聪明，记忆多会出发token上限
