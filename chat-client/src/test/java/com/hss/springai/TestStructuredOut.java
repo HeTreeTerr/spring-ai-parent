@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.alibaba.cloud.ai.dashscope.chat.DashScopeChatModel;
-import com.hss.springai.TestStructuredOut.ActorsFilms;
 
 /**
  * 结构化输出
