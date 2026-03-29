@@ -1,4 +1,4 @@
-package com.hss.springai;
+package com.hss.springai.memory;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.ai.chat.client.ChatClient;
