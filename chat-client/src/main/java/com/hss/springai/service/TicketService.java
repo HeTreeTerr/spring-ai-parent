@@ -2,6 +2,9 @@ package com.hss.springai.service;
 
 import org.springframework.stereotype.Service;
 
+/**
+ * 退票服务
+ */
 @Service
 public class TicketService {
     
